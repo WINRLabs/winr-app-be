@@ -1,0 +1,1 @@
+{"version":3,"file":"lpPrice.d.ts","sourceRoot":"","sources":["../../src/collectors/lpPrice.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,WAAW,CAAC;AAa7C,wBAAsB,cAAc,CAClC,KAAK,EAAE,WAAW,EAClB,YAAY,EAAE,MAAM,GACnB,OAAO,CAAC,IAAI,CAAC,CAiCf;AAED,wBAAsB,kBAAkB,CAAC,YAAY,EAAE,MAAM,GAAG,OAAO,CAAC,IAAI,CAAC,CAI5E"}

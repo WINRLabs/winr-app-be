@@ -1,0 +1,26 @@
+{
+  "name": "justbet-analytics",
+  "version": "1.0.0",
+  "description": "JustBet Analytics Backend - on-chain indexing to GCS",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "job": "ts-node src/job.ts"
+  },
+  "dependencies": {
+    "viem": "^2.21.0",
+    "@google-cloud/storage": "^7.14.0",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.17.0",
+    "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

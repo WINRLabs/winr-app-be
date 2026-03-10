@@ -1,0 +1,1 @@
+{"version":3,"file":"userPositions.d.ts","sourceRoot":"","sources":["../../src/collectors/userPositions.ts"],"names":[],"mappings":"AAKA,OAAO,KAAK,EAAE,cAAc,EAAE,mBAAmB,EAAE,MAAM,UAAU,CAAC;AAwFpE,wBAAsB,oBAAoB,CACxC,WAAW,EAAE,MAAM,EACnB,YAAY,EAAE,MAAM,GACnB,OAAO,CAAC;IAAE,WAAW,EAAE,cAAc,EAAE,CAAC;IAAC,OAAO,EAAE,mBAAmB,CAAA;CAAE,CAAC,CA8G1E"}
