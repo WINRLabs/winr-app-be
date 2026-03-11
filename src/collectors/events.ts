@@ -1,5 +1,5 @@
 import { getPublicClient } from "../chain";
-import { readJson, appendToArray, writeJson } from "../gcs";
+import { readJson, writeJson } from "../gcs";
 import { CONTRACTS, VAULTS } from "../config";
 import type { VaultConfig } from "../config";
 
@@ -83,6 +83,10 @@ export async function indexVaultEvents(): Promise<void> {
   if (fromBlock > currentBlock) return;
 
   const toBlock = currentBlock;
+  console.log(`Indexing vault events from block ${fromBlock} to ${toBlock}...`);
+
+  // Collect all events in memory during chunk loop; one read+write per vaultId after the loop (no per-event GCS).
+  const eventsByVault = new Map<string, unknown[]>();
   let cursorFrom = fromBlock;
   let chunkSize = CHUNK_SIZE;
 
@@ -115,7 +119,9 @@ export async function indexVaultEvents(): Promise<void> {
           sharesMinted: (log.args.sharesMinted as bigint).toString(),
           blockNumber: Number(log.blockNumber),
         };
-        await appendToArray(`global/events_${vaultId}.json`, event, 500000);
+        const arr = eventsByVault.get(vaultId) ?? [];
+        arr.push(event);
+        eventsByVault.set(vaultId, arr);
       }
       for (const log of withdrawalLogs) {
         const vaultId = vaultIdFromIndex(log.args.vaultId as bigint);
@@ -128,7 +134,9 @@ export async function indexVaultEvents(): Promise<void> {
           sharesBurned: (log.args.sharesBurned as bigint).toString(),
           blockNumber: Number(log.blockNumber),
         };
-        await appendToArray(`global/events_${vaultId}.json`, event, 500000);
+        const arr = eventsByVault.get(vaultId) ?? [];
+        arr.push(event);
+        eventsByVault.set(vaultId, arr);
       }
 
       cursorFrom = chunkTo + 1;
@@ -142,23 +150,36 @@ export async function indexVaultEvents(): Promise<void> {
     }
   }
 
+  for (const [vaultId, events] of eventsByVault) {
+    if (events.length === 0) continue;
+    const path = `global/events_${vaultId}.json`;
+    const existing = await readJson<unknown[]>(path);
+    const arr = Array.isArray(existing) ? [...existing, ...events] : [...events];
+    const trimmed = arr.length > 500000 ? arr.slice(-500000) : arr;
+    await writeJson(path, trimmed);
+  }
+
   await writeJson(CURSOR_PATH, { lastBlock: toBlock } as IndexCursor);
 }
 
 export async function indexStakingEvents(): Promise<void> {
   const client = getPublicClient();
   const cursor = await readJson<IndexCursor>("global/staking_events_cursor.json");
-  const fromBlock = cursor ? cursor.lastBlock + 1 : 0;
+  const fromBlock = cursor ? cursor.lastBlock + 1 : 5080000; // vault start block, avoid scanning from 0
   const currentBlock = Number(await client.getBlockNumber());
   if (fromBlock > currentBlock) return;
+
+  const toBlock = currentBlock;
+  console.log(`Indexing staking events from block ${fromBlock} to ${toBlock}...`);
 
   const stakingMeta = await readJson<{ rewardsDistributed?: number }>("staking/meta.json");
   let totalRevenueDistributed = typeof stakingMeta?.rewardsDistributed === "number"
     ? stakingMeta.rewardsDistributed
     : 0;
 
+  // Collect all claimed events in memory during chunk loop; one read+write per user after the loop (no per-event GCS).
+  const claimedByUser = new Map<string, unknown[]>();
   let cursorFrom = fromBlock;
-  const toBlock = currentBlock;
   let runRevenue = 0;
 
   while (cursorFrom <= toBlock) {
@@ -195,7 +216,9 @@ export async function indexStakingEvents(): Promise<void> {
           amount,
           blockNumber: Number(log.blockNumber),
         };
-        await appendToArray(`users/${user}/rewards_events.json`, event, 10000);
+        const arr = claimedByUser.get(user) ?? [];
+        arr.push(event);
+        claimedByUser.set(user, arr);
       }
 
       cursorFrom = chunkTo + 1;
@@ -205,6 +228,15 @@ export async function indexStakingEvents(): Promise<void> {
       }
       throw err;
     }
+  }
+
+  for (const [user, events] of claimedByUser) {
+    if (events.length === 0) continue;
+    const path = `users/${user}/rewards_events.json`;
+    const existing = await readJson<unknown[]>(path);
+    const arr = Array.isArray(existing) ? [...existing, ...events] : [...events];
+    const trimmed = arr.length > 10000 ? arr.slice(-10000) : arr;
+    await writeJson(path, trimmed);
   }
 
   await writeJson("global/staking_events_cursor.json", { lastBlock: toBlock } as IndexCursor);
