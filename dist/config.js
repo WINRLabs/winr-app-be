@@ -14,6 +14,18 @@ exports.VAULTS = [
         startBlock: 5080000,
         startTimestamp: 1741161600,
     },
+    {
+        id: "usdc-v1",
+        vaultIndex: 3,
+        vaultAddress: "0x91F4e0fB537C4ECE1d0ea9E72A3e2A61C83969C9",
+        liquidityManager: "0xeC5ed4502B6997f6a13E09a0f5E26E26911c3a83",
+        lpToken: "0xce25abe755E8AE4525ff3b72F8709da35DB04E43",
+        bankrollToken: "0xe436820ba0C69702c1d3E601d421c0eF38262739",
+        bankrollIdentifier: "0x0000000000000000000000000000000000000003",
+        label: "USDC Bankroll Vault",
+        startBlock: 5705940,
+        startTimestamp: 1773313000,
+    }
     // Add future vaults here
 ];
 exports.CONTRACTS = {

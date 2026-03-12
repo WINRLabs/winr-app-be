@@ -1,1 +1,1 @@
-{"version":3,"file":"events.d.ts","sourceRoot":"","sources":["../../src/collectors/events.ts"],"names":[],"mappings":"AA4EA,wBAAsB,gBAAgB,IAAI,OAAO,CAAC,IAAI,CAAC,CAqEtD;AAED,wBAAsB,kBAAkB,IAAI,OAAO,CAAC,IAAI,CAAC,CAwExD;AAED,wBAAsB,gBAAgB,IAAI,OAAO,CAAC,IAAI,CAAC,CAGtD"}
+{"version":3,"file":"events.d.ts","sourceRoot":"","sources":["../../src/collectors/events.ts"],"names":[],"mappings":"AA4EA,wBAAsB,gBAAgB,IAAI,OAAO,CAAC,IAAI,CAAC,CAsFtD;AAED,wBAAsB,kBAAkB,IAAI,OAAO,CAAC,IAAI,CAAC,CAuFxD;AAED,wBAAsB,gBAAgB,IAAI,OAAO,CAAC,IAAI,CAAC,CAGtD"}

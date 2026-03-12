@@ -1,10 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWinrUsdPrice = getWinrUsdPrice;
-const node_fetch_1 = __importDefault(require("node-fetch"));
 const gcs_1 = require("../gcs");
 const config_1 = require("../config");
 const WINR_PRICE_PATH = "global/winr_price.json";
@@ -15,7 +11,7 @@ async function getWinrUsdPrice() {
         return cached.price;
     }
     const url = `https://api.dexscreener.com/latest/dex/tokens/${config_1.WINR_DEXSCREENER_TOKEN}`;
-    const res = await (0, node_fetch_1.default)(url);
+    const res = await globalThis.fetch(url);
     if (!res.ok)
         throw new Error(`DexScreener error: ${res.status}`);
     const data = (await res.json());
